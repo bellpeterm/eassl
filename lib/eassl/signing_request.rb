@@ -13,32 +13,36 @@ module EaSSL
       }.update(options)
       @options[:key] ||= Key.new(@options)
     end
-  
+
     def ssl
       unless @ssl
         @ssl = OpenSSL::X509::Request.new
         @ssl.version = 0
-        @ssl.subject = CertificateName.new(@options[:name].options).ssl
+        @ssl.subject = CertificateName.new(@options[:name].options).name
         @ssl.public_key = key.public_key
         @ssl.sign(key.private_key, OpenSSL::Digest::SHA1.new)
       end
       @ssl
     end
-  
+
     def key
       @options[:key]
     end
-  
+
+    def to_pem
+      ssl.to_pem
+    end
+
     # This method is used to intercept and pass-thru calls to openSSL methods and instance
     # variables.
     def method_missing(method)
       ssl.send(method)
     end
-  
+
     def self.load(pem_file_path)
       new.load(File.read(pem_file_path))
     end
-  
+
     def load(pem_string)
       begin
         @ssl = OpenSSL::X509::Request.new(pem_string)
