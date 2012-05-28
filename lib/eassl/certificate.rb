@@ -48,10 +48,13 @@ module EaSSL
           @ssl.add_extension(ef.create_extension("keyUsage", "nonRepudiation,digitalSignature,keyEncipherment"))
           @ssl.add_extension(ef.create_extension("extendedKeyUsage", "clientAuth,emailProtection"))
         end
-        
+
         #add subject alternate names
-        @ssl.add_extension(ef.create_extension("subjectAltName", @options[:subject_alt_name].map { |d| "DNS: #{d}" }.join(',')) if @options[:subject_alt_name]
-        
+        if @options[:subject_alt_name]
+          subjectAltName = @options[:subject_alt_name].map { |d| "DNS: #{d}" }.join(',')
+          @ssl.add_extension(ef.create_extension("subjectAltName", subjectAltName))
+        end
+
       end
       @ssl
     end
