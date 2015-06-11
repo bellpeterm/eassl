@@ -12,7 +12,8 @@ module EaSSL
         :signing_request  => nil,               #required
         :ca_certificate   => nil,               #required
         :comment          => "Ruby/OpenSSL/EaSSL Generated Certificate",
-        :type             => "server"
+        :type             => "server",
+        :subject_alt_name => nil #optional e.g. [ "*.example.com", "example.com" ]
       }.update(options)
     end
 
@@ -38,7 +39,6 @@ module EaSSL
         ]
         # this extension must be added separately, after the others.
         # presumably needs subjectKeyIdentifier to already be in place
-        @ssl.add_extension(ef.create_extension("authorityKeyIdentifier", "keyid:always,issuer:always"))
 
         if @options[:type] == 'server'
           @ssl.add_extension(ef.create_extension("keyUsage", "digitalSignature,keyEncipherment"))
@@ -48,6 +48,13 @@ module EaSSL
           @ssl.add_extension(ef.create_extension("keyUsage", "nonRepudiation,digitalSignature,keyEncipherment"))
           @ssl.add_extension(ef.create_extension("extendedKeyUsage", "clientAuth,emailProtection"))
         end
+
+        #add subject alternate names
+        if @options[:subject_alt_name]
+          subjectAltName = @options[:subject_alt_name].map { |d| "DNS: #{d}" }.join(',')
+          @ssl.add_extension(ef.create_extension("subjectAltName", subjectAltName))
+        end
+
       end
       @ssl
     end
