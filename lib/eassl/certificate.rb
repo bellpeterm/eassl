@@ -39,6 +39,7 @@ module EaSSL
         ]
         # this extension must be added separately, after the others.
         # presumably needs subjectKeyIdentifier to already be in place
+        @ssl.add_extension(ef.create_extension("authorityKeyIdentifier", "keyid:always,issuer:always")) 
 
         if @options[:type] == 'server'
           @ssl.add_extension(ef.create_extension("keyUsage", "digitalSignature,keyEncipherment"))
