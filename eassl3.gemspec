@@ -4,20 +4,21 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{eassl2}
-  s.version = "2.0.0"
+  s.name = %q{eassl3}
+  s.version = "3.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Paul Nicholson}, %q{Paul Meserve}, %q{Chris Andrews}]
+  s.authors = [%q{Peter Bell}, %q{Paul Nicholson}, %q{Paul Meserve}, %q{Chris Andrews}]
   s.date = %q{2012-07-20}
   s.description = %q{This gem is a drop-in replacement for eassl 0.1.1643}
-  s.email = %q{chris@nodnol.org}
+  s.email = %q{bellpeterm+github@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.txt"
   ]
   s.files = [
     ".document",
+    ".rspec",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
@@ -25,7 +26,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "Readme.mkd",
     "VERSION",
-    "eassl.gemspec",
+    "eassl3.gemspec",
     "lib/eassl.rb",
     "lib/eassl/authority_certificate.rb",
     "lib/eassl/certificate.rb",
@@ -40,17 +41,15 @@ Gem::Specification.new do |s|
     "test/certificate.pem",
     "test/csr.pem",
     "test/encrypted_key.pem",
-    "test/helper.rb",
-    "test/test_eassl.rb",
-    "test/test_eassl_authority_certificate.rb",
-    "test/test_eassl_certificate.rb",
-    "test/test_eassl_certificate_authority.rb",
-    "test/test_eassl_key.rb",
-    "test/test_eassl_key_csr.rb",
-    "test/test_eassl_sign_cert.rb",
-    "test/test_eassl_signing_request.rb",
     "test/unencrypted_key.pem",
-    "test/unencrypted_key2.pem"
+    "test/unencrypted_key2.pem",
+    "spec/eassl_authority_certificate_spec.rb",
+    "spec/eassl_certificate_spec.rb",
+    "spec/eassl_key_spec.rb",
+    "spec/eassl_serial_spec.rb",
+    "spec/eassl_signing_request_spec.rb",
+    "spec/eassl_spec.rb",
+    "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/chrisa/eassl}
   s.licenses = [%q{Ruby}]
