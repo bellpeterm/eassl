@@ -44,7 +44,7 @@ module EaSSL
           subjectAltName = @options[:subject_alt_name].map { |d| "DNS: #{d}" }.join(',')
           @extensions << ef.create_extension("subjectAltName", subjectAltName)
         end
-        
+
         if @extensions.count > 0
           seq = OpenSSL::ASN1::Sequence.new(extensions)
           set = OpenSSL::ASN1::Set.new([seq])
@@ -82,6 +82,13 @@ module EaSSL
     def load(pem_string)
       begin
         @ssl = OpenSSL::X509::Request.new(pem_string)
+        @extensions = begin
+          if attr = ssl.attributes.detect { |a| ['extReq','msExtReq'].include?(a.oid)}
+            set = OpenSSL::ASN1.decode(attr.value)
+            seq = set.value.first
+            seq.value.collect { |e| OpenSSL::X509::Extension.new(e) }
+          end
+        end
       rescue
         raise "SigningRequestLoader: Error loading signing request"
       end
