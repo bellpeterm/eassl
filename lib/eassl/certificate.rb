@@ -55,7 +55,7 @@ module EaSSL
           extensions << ef.create_extension("subjectAltName", subjectAltName)
         end
 
-        if sr = @options[:signing_request]
+        if sr = @options[:signing_request] and not sr.extensions.nil?
           sr.extensions.each do |ext|
             if @options[:override_req] # CA extensions take precedence in merge, default behavior
               extensions << ext unless extensions.any? { |e| e.oid == ext.oid }
