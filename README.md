@@ -49,10 +49,10 @@ Generating a CSR and private key:
 Standard certificate options, e.g. department or email, are not described here
 * `subject_alt_name` - `subjectAltName` option, should be an array of either strings or hashes. Each string defaults to the `DNS` type.
 * `type` - use pre-defined collection of extensions.
-** `:type => 'server'` - default, adds `keyUsage=digitalSignature,keyEncipherment` and `extendedKeyUsage=serverAuth`
-** `:type => 'client'` - adds `keyUsage=nonRepudiation,digitalSignature,keyEncipherment` and `extendedKeyUsage=clientAuth,emailProtection`
-** `:type => 'peer'` - adds `keyUsage=digitalSignature,keyEncipherment` and `extendedKeyUsage=serverAuth,clientAuth`
-** `:type => 'server'` - adds the extensions provided in the `:extensions` option
+ * `:type => 'server'` - default, adds `keyUsage=digitalSignature,keyEncipherment` and `extendedKeyUsage=serverAuth`
+ * `:type => 'client'` - adds `keyUsage=nonRepudiation,digitalSignature,keyEncipherment` and `extendedKeyUsage=clientAuth,emailProtection`
+ * `:type => 'peer'` - adds `keyUsage=digitalSignature,keyEncipherment` and `extendedKeyUsage=serverAuth,clientAuth`
+ * `:type => 'server'` - adds the extensions provided in the `:extensions` option
 * `extensions` - list of the key usage values in case if the `:type => 'custom'` was chosen. Takes an array of `{:name, :value}` hashes.
 
 ## Development
