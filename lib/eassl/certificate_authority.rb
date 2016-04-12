@@ -33,7 +33,6 @@ module EaSSL
         :ca_certificate => @certificate,
         :serial => @serial.issue_serial,
         :type => type,
-        :extensions => signing_request.options[:extensions]
       }
       if days_valid
         options[:days_valid] = days_valid

@@ -41,6 +41,26 @@ RSpec.describe EaSSL, "#certficate_authorities" do
       expect(cert.subject.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=foo.bar.com/emailAddress=dev@venda.com"
       expect(ext_key_usage).to eq "TLS Web Client Authentication, E-mail Protection"
     end
+
+    it "can properly sign a peer certificate" do
+      csr = EaSSL::SigningRequest.new(:name => @name, :key => @key)
+      cert = @ca.create_certificate(csr, 'peer')
+      ext_key_usage = cert.extensions.select {|e| e.oid == 'extendedKeyUsage' }.first.value
+
+      expect(cert.issuer.to_s).to eq "/CN=CA"
+      expect(cert.subject.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=foo.bar.com/emailAddress=dev@venda.com"
+      expect(ext_key_usage).to eq "TLS Web Server Authentication, TLS Web Client Authentication"
+    end
+    
+    it "can properly sign a custom certificate" do
+      csr = EaSSL::SigningRequest.new(:name => @name, :key => @key, :extensions => [{:name => "extendedKeyUsage", :value => "clientAuth"}])
+      cert = @ca.create_certificate(csr, 'custom')
+      ext_key_usage = cert.extensions.select {|e| e.oid == 'extendedKeyUsage' }.first.value
+
+      expect(cert.issuer.to_s).to eq "/CN=CA"
+      expect(cert.subject.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=foo.bar.com/emailAddress=dev@venda.com"
+      expect(ext_key_usage).to eq "TLS Web Client Authentication"
+    end
     
     it "properly sets expiry on a certificate" do
       csr = EaSSL::SigningRequest.new(:name => @name, :key => @key)
@@ -102,6 +122,26 @@ RSpec.describe EaSSL, "#certficate_authorities" do
       expect(ext_key_usage).to eq "TLS Web Client Authentication, E-mail Protection"
     end
     
+    it "can properly sign a peer certificate" do
+      csr = EaSSL::SigningRequest.new(:name => @name, :key => @key)
+      cert = @ca.create_certificate(csr, 'peer')
+      ext_key_usage = cert.extensions.select {|e| e.oid == 'extendedKeyUsage' }.first.value
+
+      expect(cert.issuer.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=CA/emailAddress=dev@venda.com"
+      expect(cert.subject.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=foo.bar.com/emailAddress=dev@venda.com"
+      expect(ext_key_usage).to eq "TLS Web Server Authentication, TLS Web Client Authentication"
+    end
+    
+    it "can properly sign a custom certificate" do
+      csr = EaSSL::SigningRequest.new(:name => @name, :key => @key, :extensions => [{:name => "extendedKeyUsage", :value => "clientAuth"}])
+      cert = @ca.create_certificate(csr, 'custom')
+      ext_key_usage = cert.extensions.select {|e| e.oid == 'extendedKeyUsage' }.first.value
+
+      expect(cert.issuer.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=CA/emailAddress=dev@venda.com"
+      expect(cert.subject.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=foo.bar.com/emailAddress=dev@venda.com"
+      expect(ext_key_usage).to eq "TLS Web Client Authentication"
+    end
+    
     it "properly sets expiry on a certificate" do
       csr = EaSSL::SigningRequest.new(:name => @name, :key => @key)
       t = Time.now
@@ -154,6 +194,26 @@ RSpec.describe EaSSL, "#certficate_authorities" do
       expect(cert.issuer.to_s).to eq "/C=US/O=Venda/OU=auto-CA/CN=CA"
       expect(cert.subject.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=foo.bar.com/emailAddress=dev@venda.com"
       expect(ext_key_usage).to eq "TLS Web Client Authentication, E-mail Protection"
+    end
+    
+    it "can properly sign a peer certificate" do
+      csr = EaSSL::SigningRequest.new(:name => @name, :key => @key)
+      cert = @ca.create_certificate(csr, 'peer')
+      ext_key_usage = cert.extensions.select {|e| e.oid == 'extendedKeyUsage' }.first.value
+
+      expect(cert.issuer.to_s).to eq "/C=US/O=Venda/OU=auto-CA/CN=CA"
+      expect(cert.subject.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=foo.bar.com/emailAddress=dev@venda.com"
+      expect(ext_key_usage).to eq "TLS Web Server Authentication, TLS Web Client Authentication"
+    end
+    
+    it "can properly sign a custom certificate" do
+      csr = EaSSL::SigningRequest.new(:name => @name, :key => @key, :extensions => [{:name => "extendedKeyUsage", :value => "clientAuth"}])
+      cert = @ca.create_certificate(csr, 'custom')
+      ext_key_usage = cert.extensions.select {|e| e.oid == 'extendedKeyUsage' }.first.value
+
+      expect(cert.issuer.to_s).to eq "/C=US/O=Venda/OU=auto-CA/CN=CA"
+      expect(cert.subject.to_s).to eq "/C=GB/ST=London/L=London/O=Venda Ltd/OU=Development/CN=foo.bar.com/emailAddress=dev@venda.com"
+      expect(ext_key_usage).to eq "TLS Web Client Authentication"
     end
     
     it "properly sets expiry on a certificate" do

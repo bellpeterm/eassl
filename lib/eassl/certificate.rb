@@ -52,7 +52,8 @@ module EaSSL
           extensions << ef.create_extension("keyUsage", "digitalSignature,keyEncipherment")
           extensions << ef.create_extension("extendedKeyUsage", "serverAuth,clientAuth")
         when 'custom'
-          @options[:extensions].each do |ext|
+          exten_opts = @options[:extensions] || @options[:signing_request].options[:extensions]
+          exten_opts.each do |ext|
             extensions << ef.create_extension(ext[:name], ext[:value])
           end
         end
