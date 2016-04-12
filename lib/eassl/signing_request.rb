@@ -13,6 +13,7 @@ module EaSSL
         :name       => {},                #required, CertificateName
         :key        => nil,               #required
         :digest     => OpenSSL::Digest::SHA512.new,
+        :extensions => nil,
       }.update(options)
       @options[:key] ||= Key.new(@options)
     end
@@ -38,10 +39,18 @@ module EaSSL
           @extensions << ef.create_extension("basicConstraints","CA:FALSE")
           @extensions << ef.create_extension("keyUsage", "nonRepudiation,digitalSignature,keyEncipherment")
           @extensions << ef.create_extension("extendedKeyUsage", "clientAuth,emailProtection")
+        when 'peer'
+          @extensions << ef.create_extension("basicConstraints","CA:FALSE")
+          @extensions << ef.create_extension("keyUsage", "digitalSignature,keyEncipherment")
+          @extensions << ef.create_extension("extendedKeyUsage", "serverAuth,clientAuth")
+        when 'custom'
+          @options[:extensions].each do |ext|
+            @extensions << ef.create_extensions(ext[:name], ext[:value])
+          end
         end
         
         if @options[:subject_alt_name]
-          subjectAltName = @options[:subject_alt_name].map { |d| "DNS: #{d}" }.join(',')
+          subjectAltName = @options[:subject_alt_name].map {|d| d.is_a?(Hash) ? "#{d[:name]}: #{d[:value]}" : "DNS: #{d}"  }.join(',')
           @extensions << ef.create_extension("subjectAltName", subjectAltName)
         end
 
