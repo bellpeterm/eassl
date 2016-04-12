@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    eassl3 (3.0.2)
+    eassl3 (3.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -30,6 +30,3 @@ DEPENDENCIES
   eassl3!
   rake (~> 10.0)
   rspec
-
-BUNDLED WITH
-   1.11.2
