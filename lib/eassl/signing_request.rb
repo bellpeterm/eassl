@@ -13,7 +13,7 @@ module EaSSL
         :name       => {},                #required, CertificateName
         :key        => nil,               #required
         :digest     => OpenSSL::Digest::SHA512.new,
-        :extensions => nil,
+        :extensions => nil
       }.update(options)
       @options[:key] ||= Key.new(@options)
     end
