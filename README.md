@@ -33,7 +33,7 @@ Generating a CSR and private key:
       :city           => 'Fargo',
       :state          => 'North Dakota',
       :country        => 'USA',
-      :subject_alt_name => ['www.mydomain.com', 'mydomain.com', {:name => "IP", :value => "127.0.0.1"]
+      :subject_alt_name => ['www.mydomain.com', 'mydomain.com', { :name => "IP", :value => "127.0.0.1" }]
       :type           => 'custom'
       :extensions     => [ {:name => "keyUsage", :value => "digitalSignature"} ]
     }
