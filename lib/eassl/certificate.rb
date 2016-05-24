@@ -13,8 +13,9 @@ module EaSSL
         :ca_certificate   => nil,               #required
         :comment          => "Ruby/OpenSSL/EaSSL Generated Certificate",
         :type             => "server",
-        :subject_alt_name => nil, #optional e.g. [ "*.example.com", "example.com" ]
-        :override_req     => true
+        :subject_alt_name => nil, #optional e.g. [ "*.example.com", "example.com", {:name => "IP", :value => "127.0.0.1"} ]
+        :override_req     => true,
+        :extensions       => nil #if type is custom, [ {:name => "keyUsage", :value => "digitalSignature"} ]
       }.update(options)
     end
 
@@ -47,11 +48,19 @@ module EaSSL
         when 'client'
           extensions << ef.create_extension("keyUsage", "nonRepudiation,digitalSignature,keyEncipherment")
           extensions << ef.create_extension("extendedKeyUsage", "clientAuth,emailProtection")
+        when 'peer'
+          extensions << ef.create_extension("keyUsage", "digitalSignature,keyEncipherment")
+          extensions << ef.create_extension("extendedKeyUsage", "serverAuth,clientAuth")
+        when 'custom'
+          exten_opts = @options[:extensions] || @options[:signing_request].options[:extensions]
+          exten_opts.each do |ext|
+            extensions << ef.create_extension(ext[:name], ext[:value])
+          end
         end
 
         #add subject alternate names
         if @options[:subject_alt_name]
-          subjectAltName = @options[:subject_alt_name].map { |d| "DNS: #{d}" }.join(',')
+          subjectAltName = @options[:subject_alt_name].map {|d| d.is_a?(Hash) ? "#{d[:name]}: #{d[:value]}" : "DNS: #{d}"  }.join(',')
           extensions << ef.create_extension("subjectAltName", subjectAltName)
         end
 

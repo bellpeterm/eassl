@@ -52,6 +52,24 @@ RSpec.describe EaSSL, "#certificate" do
 
       expect(ext_key_usage.value).to eq "TLS Web Client Authentication, E-mail Protection"
     end
+    
+    it "sets usage for peer-to-peer hosts" do
+      csr = EaSSL::SigningRequest.new(:name => @name, :key => @key)
+      cert = EaSSL::Certificate.new(:type => 'peer', :signing_request => csr, :ca_certificate => @ca.certificate)
+      cert.sign(@ca.key)
+      ext_key_usage = cert.extensions.select {|e| e.oid == 'extendedKeyUsage' }.first
+
+      expect(ext_key_usage.value).to eq "TLS Web Server Authentication, TLS Web Client Authentication"
+    end
+
+    it "sets usage for custom hosts" do
+      csr = EaSSL::SigningRequest.new(:name => @name, :key => @key, :extensions => [{:name => "extendedKeyUsage", :value => "clientAuth"}])
+      cert = EaSSL::Certificate.new(:type => 'custom', :signing_request => csr, :ca_certificate => @ca.certificate)
+      cert.sign(@ca.key)
+      ext_key_usage = cert.extensions.select {|e| e.oid == 'extendedKeyUsage' }.first
+
+      expect(ext_key_usage.value).to eq "TLS Web Client Authentication"
+    end
 
     it "sets a subject alternative name" do
       csr = EaSSL::SigningRequest.new(:name => @name, :key => @key)
@@ -70,6 +88,17 @@ RSpec.describe EaSSL, "#certificate" do
 
       expect(ext_key_usage.value).to match "DNS:bar.com"
       expect(ext_key_usage.value).to match "DNS:foo.com"
+    end
+
+    it "sets multiple subject alternative names with different types" do
+      csr = EaSSL::SigningRequest.new(:name => @name, :key => @key)
+      cert = EaSSL::Certificate.new(:subject_alt_name => ['bar.com', 'foo.com', {:name => "IP", :value => "127.0.0.1"}], :signing_request => csr, :ca_certificate => @ca.certificate)
+      cert.sign(@ca.key)
+      ext_key_usage = cert.extensions.select {|e| e.oid == 'subjectAltName' }.first
+
+      expect(ext_key_usage.value).to match "DNS:bar.com"
+      expect(ext_key_usage.value).to match "DNS:foo.com"
+      expect(ext_key_usage.value).to match "IP Address:127.0.0.1"
     end
 
     it "loads and verifies a certificate fingerprint" do
